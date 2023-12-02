@@ -1,4 +1,7 @@
 #![allow(unused_variables)]
+use std::ops::Index;
+
+use regex::Regex;
 
 pub fn part_one(input: &str) -> Option<u32> {
     let mut total: u32 = 0;
@@ -12,24 +15,31 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let mut total: u32 = 0;
-    for line in input.lines() {
-        let line = line
-            .replace("one", "o1e")
-            .replace("two", "t2o")
-            .replace("three", "t3e")
-            .replace("four", "f4r")
-            .replace("five", "f5e")
-            .replace("six", "s6x")
-            .replace("seven", "s7n")
-            .replace("eight", "e8t")
-            .replace("nine", "n9e");
-        let digits: Vec<char> = line.chars().filter(|c| c.is_ascii_digit()).collect();
-        let tens = digits.first()?.to_digit(10)?;
-        let ones = digits.last()?.to_digit(10)?;
-        total += 10 * tens + ones;
-    }
-    Some(total)
+    let pattern = [
+        r"\d", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+    ];
+    let re = Regex::new(&pattern.join("|")).unwrap();
+
+    let result = input
+        .lines()
+        .map(|line| {
+            let digits = re
+                .find_iter(line)
+                .map(|m| {
+                    let x = m.as_str();
+                    if x.len() == 1 {
+                        // has to be a digit
+                        x.parse::<u32>().unwrap()
+                    } else {
+                        // has to be a spelled-out number, so find its position in table
+                        pattern.iter().position(|&r| r == x).unwrap() as u32
+                    }
+                })
+                .collect::<Vec<u32>>();
+            digits.first().unwrap() * 10 + digits.last().unwrap()
+        })
+        .sum();
+    Some(result)
 }
 
 advent_of_code::main!(1);
