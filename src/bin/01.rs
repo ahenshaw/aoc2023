@@ -1,5 +1,4 @@
 #![allow(unused_variables)]
-use std::ops::Index;
 
 use regex::Regex;
 
