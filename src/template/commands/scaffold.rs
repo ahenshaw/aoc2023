@@ -20,13 +20,13 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        let result = part_one(&advent_of_code::template::read_file("examples", DAY));
+        let result = part_one(&advent_of_code::template::read_file_with_part("examples", DAY, 1));
         assert_eq!(result, None);
     }
 
     #[test]
     fn test_part_two() {
-        let result = part_two(&advent_of_code::template::read_file("examples", DAY));
+        let result = part_two(&advent_of_code::template::read_file_with_part("examples", DAY, 2));
         assert_eq!(result, None);
     }
 }
@@ -44,7 +44,8 @@ pub fn handle(day: u8) {
     let day_padded = format!("{day:02}");
 
     let input_path = format!("data/inputs/{day_padded}.txt");
-    let example_path = format!("data/examples/{day_padded}.txt");
+    let example_path_1 = format!("data/examples/{day_padded}-1.txt");
+    let example_path_2 = format!("data/examples/{day_padded}-2.txt");
     let module_path = format!("src/bin/{day_padded}.rs");
 
     let mut file = match safe_create_file(&module_path) {
@@ -75,12 +76,22 @@ pub fn handle(day: u8) {
         }
     }
 
-    match create_file(&example_path) {
+    match create_file(&example_path_1) {
         Ok(_) => {
-            println!("Created empty example file \"{}\"", &example_path);
+            println!("Created empty example file \"{}\"", &example_path_1);
         }
         Err(e) => {
-            eprintln!("Failed to create example file: {e}");
+            eprintln!("Failed to create example file 1: {e}");
+            process::exit(1);
+        }
+    }
+
+    match create_file(&example_path_2) {
+        Ok(_) => {
+            println!("Created empty example file \"{}\"", &example_path_2);
+        }
+        Err(e) => {
+            eprintln!("Failed to create example file 2: {e}");
             process::exit(1);
         }
     }
