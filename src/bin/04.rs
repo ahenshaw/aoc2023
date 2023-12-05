@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 type Card = HashSet<u32>;
 
-fn parse(input: &str) -> Vec<usize> {
+fn score(input: &str) -> Vec<usize> {
     input
         .lines()
         .map(|line| {
@@ -24,7 +24,7 @@ fn parse(input: &str) -> Vec<usize> {
 
 pub fn part_one(input: &str) -> Option<u32> {
     Some(
-        parse(input)
+        score(input)
             .iter()
             .filter(|&count| *count > 0)
             .map(|&count| 2u32.pow(count as u32 - 1))
@@ -33,7 +33,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let cards = parse(input);
+    let cards = score(input);
     let mut to_check: Vec<_> = (0..cards.len()).collect();
     let mut num_cards = 0;
     while !to_check.is_empty() {
