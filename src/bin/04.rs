@@ -1,21 +1,23 @@
 use std::collections::HashSet;
 
+type Card = HashSet<u32>;
+
 fn parse(input: &str) -> Vec<usize> {
     input
         .lines()
         .map(|line| {
-            let mut winning = HashSet::<u32>::new();
-
-            let (left, right) = line.split_once("|").unwrap();
-            let (_, left) = left.split_once(":").unwrap();
-            for item in left.split_ascii_whitespace() {
-                winning.insert(item.parse::<u32>().unwrap());
-            }
-
-            right
+            let (_, info) = line.split_once(":").unwrap();
+            let (left, right) = info.split_once("|").unwrap();
+            let winning = left
                 .split_ascii_whitespace()
-                .filter(|s| winning.contains(&s.parse::<u32>().unwrap()))
-                .count()
+                .map(|n| n.parse::<u32>().unwrap())
+                .collect::<Card>();
+
+            let guesses = right
+                .split_ascii_whitespace()
+                .map(|n| n.parse::<u32>().unwrap())
+                .collect::<Card>();
+            winning.intersection(&guesses).count()
         })
         .collect()
 }
