@@ -68,13 +68,17 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        let result = part_one(&advent_of_code::template::read_file("examples", 2));
+        let result = part_one(&advent_of_code::template::read_file_with_part(
+            "examples", 2, 1,
+        ));
         assert_eq!(result, Some(8));
     }
 
     #[test]
     fn test_part_two() {
-        let result = part_two(&advent_of_code::template::read_file("examples", 2));
+        let result = part_two(&advent_of_code::template::read_file_with_part(
+            "examples", 2, 2,
+        ));
         assert_eq!(result, Some(2286));
     }
 }
