@@ -34,15 +34,79 @@ pub fn part_one(input: &str) -> Option<u32> {
     Some(count)
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
-    let mut count = 0;
+fn check_if_done(targets: &Vec<String>) -> bool {
+    targets.iter().all(|target| target.ends_with("Z"))
+}
+
+fn who_has_a_z(targets: &Vec<String>) -> Option<String> {
+    if targets.iter().any(|target| target.ends_with("Z")) {
+        return Some(targets.join(", "));
+    }
+    return None;
+}
+
+/// In part two, the number of iterations is prohibitive,
+/// so you have to realize that each target gets returned
+/// to after n cycles.  Therefore, we're just looking for
+/// n for each target and then finding the LCM of all of
+/// those cycles.
+///
+pub fn part_two(input: &str) -> Option<usize> {
+    let mut count: u32 = 0;
 
     let (lr, code) = parse(input);
     let mut lr_gen = lr.chars().cycle();
+    let mut targets: Vec<String> = code
+        .keys()
+        .filter(|k| k.ends_with("A"))
+        .map(|s| s.clone())
+        .collect();
+    let mut cycles: Vec<usize> = vec![];
+    while cycles.len() != targets.len() {
+        let is_left = lr_gen.next().unwrap() == 'L';
 
-    Some(count)
+        if targets.iter().any(|target| target.ends_with("Z")) {
+            cycles.push(count as usize);
+        }
+        targets = targets
+            .iter()
+            .map(|t| {
+                if is_left {
+                    code[t].0.clone()
+                } else {
+                    code[t].1.clone()
+                }
+            })
+            .collect();
+        count += 1;
+    }
+    let answer = cycles.into_iter().reduce(|acc, f| lcm(acc, f)).unwrap();
+    Some(answer)
 }
 
+fn lcm(first: usize, second: usize) -> usize {
+    first * second / gcd(first, second)
+}
+
+fn gcd(first: usize, second: usize) -> usize {
+    let mut max = first;
+    let mut min = second;
+    if min > max {
+        let val = max;
+        max = min;
+        min = val;
+    }
+
+    loop {
+        let res = max % min;
+        if res == 0 {
+            return min;
+        }
+
+        max = min;
+        min = res;
+    }
+}
 advent_of_code::main!(8);
 
 #[cfg(test)]
