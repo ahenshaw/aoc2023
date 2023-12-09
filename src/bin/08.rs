@@ -34,17 +34,6 @@ pub fn part_one(input: &str) -> Option<u32> {
     Some(count)
 }
 
-fn check_if_done(targets: &Vec<String>) -> bool {
-    targets.iter().all(|target| target.ends_with("Z"))
-}
-
-fn who_has_a_z(targets: &Vec<String>) -> Option<String> {
-    if targets.iter().any(|target| target.ends_with("Z")) {
-        return Some(targets.join(", "));
-    }
-    return None;
-}
-
 /// In part two, the number of iterations is prohibitive,
 /// so you have to realize that each target gets returned
 /// to after n cycles.  Therefore, we're just looking for
@@ -62,6 +51,7 @@ pub fn part_two(input: &str) -> Option<usize> {
         .map(|s| s.clone())
         .collect();
     let mut cycles: Vec<usize> = vec![];
+
     while cycles.len() != targets.len() {
         let is_left = lr_gen.next().unwrap() == 'L';
 
