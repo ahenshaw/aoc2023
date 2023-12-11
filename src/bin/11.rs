@@ -1,7 +1,7 @@
 use gridly::{prelude::*, shorthand::L};
 use gridly_grids::SparseGrid;
 use itertools::Itertools;
-use std::collections::HashSet;
+use std::{collections::HashSet, f32::consts::E};
 
 type Grid = SparseGrid<usize>;
 fn expand(space: Grid, extras: isize) -> Grid {
@@ -17,32 +17,12 @@ fn expand(space: Grid, extras: isize) -> Grid {
     let empty_rows: HashSet<&isize> = all_rows.difference(&rows).collect();
     let empty_cols: HashSet<&isize> = all_cols.difference(&cols).collect();
 
-    // reverse sort the empties so that they don't screw up the checking
-    let empty_rows = empty_rows
-        .into_iter()
-        .sorted()
-        .rev()
-        .collect::<Vec<&isize>>();
-    let empty_cols = empty_cols
-        .into_iter()
-        .sorted()
-        .rev()
-        .collect::<Vec<&isize>>();
-
     let mut ng = Grid::new((0, 0));
     for (loc, &value) in space.occupied_entries() {
-        let mut loc = loc.clone();
-        for empty_row in &empty_rows {
-            if loc.row.0 > **empty_row {
-                loc.row += Rows(extras);
-            }
-        }
-        for empty_col in &empty_cols {
-            if loc.column.0 > **empty_col {
-                loc.column += Columns(extras);
-            }
-        }
-        ng.insert(loc, value);
+        let need_rows = empty_rows.iter().filter(|&r| loc.row.0 > **r).count() as isize;
+        let need_cols = empty_cols.iter().filter(|&c| loc.column.0 > **c).count() as isize;
+        let new_loc = *loc + Vector::new(need_rows * extras, need_cols * extras);
+        ng.insert(new_loc, value);
     }
     ng
 }
@@ -84,7 +64,7 @@ pub fn part_one(input: &str) -> Option<isize> {
 
 pub fn part_two(input: &str) -> Option<isize> {
     let space = parse(input);
-    let space = expand(space, 999_999);
+    let space = expand(space, 99);
 
     let sum_distance = space
         .occupied_entries()
