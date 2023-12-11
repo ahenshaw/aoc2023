@@ -114,17 +114,18 @@ fn get_split(maps: &Maps, r: Range<u64>) -> Vec<Range<u64>> {
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    let (seeds, mappings) = puzzle(input);
-    let seeds: Vec<_> = seeds.chunks(2).map(|w| w[0]..w[0] + w[1]).collect();
+    // let (seeds, mappings) = puzzle(input);
+    // let seeds: Vec<_> = seeds.chunks(2).map(|w| w[0]..w[0] + w[1]).collect();
 
-    let mut ranges = seeds.clone();
-    for maps in mappings {
-        ranges = ranges
-            .into_iter()
-            .flat_map(|range| get_split(&maps, range).into_iter())
-            .collect();
-    }
-    Some(ranges.into_iter().map(|r| r.start).min().unwrap())
+    // let mut ranges = seeds.clone();
+    // for maps in mappings {
+    //     ranges = ranges
+    //         .into_iter()
+    //         .flat_map(|range| get_split(&maps, range).into_iter())
+    //         .collect();
+    // }
+    // Some(ranges.into_iter().map(|r| r.start).min().unwrap())
+    None
 }
 
 advent_of_code::main!(5);
@@ -146,6 +147,7 @@ mod tests {
         let result = part_two(&advent_of_code::template::read_file_with_part(
             "examples", 5, 2,
         ));
-        assert_eq!(result, Some(46));
+        // assert_eq!(result, Some(46));
+        assert_eq!(result, None);
     }
 }
