@@ -1,7 +1,7 @@
 use gridly::{prelude::*, shorthand::L};
 use gridly_grids::SparseGrid;
 use itertools::Itertools;
-use std::{collections::HashSet, f32::consts::E};
+use std::collections::HashSet;
 
 type Grid = SparseGrid<usize>;
 fn expand(space: Grid, extras: isize) -> Grid {
@@ -31,12 +31,7 @@ fn parse(input: &str) -> Grid {
     let mut space = Grid::new((0, 0));
     let mut id = 1;
     for (row, line) in input.lines().enumerate() {
-        for column in line
-            .chars()
-            .enumerate()
-            .filter(|(_, c)| *c == '#')
-            .map(|(i, _)| i)
-        {
+        for (column, _) in line.match_indices('#') {
             space.insert(L(row as isize, column as isize), id);
             id += 1;
         }

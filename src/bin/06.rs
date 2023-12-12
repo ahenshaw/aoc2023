@@ -2,12 +2,12 @@ use prse::parse;
 
 fn puzzle(input: &str) -> Vec<(u32, u32)> {
     let mut lines = input.lines();
-    let (_, numbers) = lines.next().unwrap().split_once(":").unwrap();
+    let (_, numbers) = lines.next().unwrap().split_once(':').unwrap();
     let time: Vec<u32> = numbers
         .split_ascii_whitespace()
         .map(|n| n.parse::<u32>().unwrap())
         .collect();
-    let (_, numbers) = lines.next().unwrap().split_once(":").unwrap();
+    let (_, numbers) = lines.next().unwrap().split_once(':').unwrap();
     let distance: Vec<u32> = numbers
         .split_ascii_whitespace()
         .map(|n| n.parse::<u32>().unwrap())
@@ -22,7 +22,7 @@ pub fn part_one(input: &str) -> Option<u32> {
             .map(|(time, distance)| {
                 (0..*time)
                     .map(|t| t * (time - t))
-                    .filter(|d| d > &distance)
+                    .filter(|d| d > distance)
                     .count() as u32
             })
             .product(),
@@ -30,7 +30,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let input = input.replace(" ", "");
+    let input = input.replace(' ', "");
     let mut lines = input.lines();
 
     let time: u64 = parse!(lines.next().unwrap(), "Time:{}");

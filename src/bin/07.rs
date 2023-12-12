@@ -19,7 +19,7 @@ fn parse(input: &str, part: u32) -> Hands {
     input
         .lines()
         .map(|line| {
-            let (hand, bid) = line.split_once(" ").unwrap();
+            let (hand, bid) = line.split_once(' ').unwrap();
             let bid: u32 = bid.parse().unwrap();
             let hand: Hand = hand
                 .chars()
@@ -50,17 +50,17 @@ fn max_same_kind(hand: &Hand) -> usize {
 
 fn get_hand_value(hand: &Hand) -> Value {
     let ranks: HashSet<&u32> = hand.iter().collect();
-    let value = match ranks.len() {
+    match ranks.len() {
         1 => Value::FiveOfAKind,
         2 => {
-            if max_same_kind(&hand) == 4 {
+            if max_same_kind(hand) == 4 {
                 Value::FourOfAKind
             } else {
                 Value::FullHouse
             }
         }
         3 => {
-            if max_same_kind(&hand) == 3 {
+            if max_same_kind(hand) == 3 {
                 Value::ThreeOfAKind
             } else {
                 Value::TwoPair
@@ -69,8 +69,7 @@ fn get_hand_value(hand: &Hand) -> Value {
         4 => Value::OnePair,
         5 => Value::HighCard,
         _ => unreachable!(),
-    };
-    value
+    }
 }
 
 fn get_wildcard_hand_value(hand: &Hand) -> Value {
@@ -101,7 +100,7 @@ pub fn part_one(input: &str) -> Option<u32> {
         .iter()
         .map(|(hand, bid)| {
             let mut slider: u32 = 64_000_000;
-            let mut value = get_hand_value(&hand) as u32 * slider;
+            let mut value = get_hand_value(hand) as u32 * slider;
             for card in hand {
                 slider /= 20;
                 value += card * slider;
@@ -118,7 +117,7 @@ pub fn part_two(input: &str) -> Option<u32> {
         .iter()
         .map(|(hand, bid)| {
             let mut slider: u32 = 64_000_000;
-            let mut value = get_wildcard_hand_value(&hand) as u32 * slider;
+            let mut value = get_wildcard_hand_value(hand) as u32 * slider;
             for card in hand {
                 slider /= 20;
                 value += card * slider;

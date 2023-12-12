@@ -6,8 +6,8 @@ fn score(input: &str) -> Vec<usize> {
     input
         .lines()
         .map(|line| {
-            let (_, info) = line.split_once(":").unwrap();
-            let (left, right) = info.split_once("|").unwrap();
+            let (_, info) = line.split_once(':').unwrap();
+            let (left, right) = info.split_once('|').unwrap();
             let winning = left
                 .split_ascii_whitespace()
                 .map(|n| n.parse::<u32>().unwrap())
@@ -36,8 +36,7 @@ pub fn part_two(input: &str) -> Option<u32> {
     let cards = score(input);
     let mut to_check: Vec<_> = (0..cards.len()).collect();
     let mut num_cards = 0;
-    while !to_check.is_empty() {
-        let card = to_check.pop().unwrap();
+    while let Some(card) = to_check.pop() {
         num_cards += 1;
         let num_winners = cards[card];
         to_check.extend(card + 1..card + 1 + num_winners);

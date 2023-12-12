@@ -45,17 +45,13 @@ pub fn part_two(input: &str) -> Option<usize> {
 
     let (lr, code) = parse(input);
     let mut lr_gen = lr.chars().cycle();
-    let mut targets: Vec<String> = code
-        .keys()
-        .filter(|k| k.ends_with("A"))
-        .map(|s| s.clone())
-        .collect();
+    let mut targets: Vec<String> = code.keys().filter(|k| k.ends_with('A')).cloned().collect();
     let mut cycles: Vec<usize> = vec![];
 
     while cycles.len() != targets.len() {
         let is_left = lr_gen.next().unwrap() == 'L';
 
-        if targets.iter().any(|target| target.ends_with("Z")) {
+        if targets.iter().any(|target| target.ends_with('Z')) {
             cycles.push(count as usize);
         }
         targets = targets
@@ -70,7 +66,7 @@ pub fn part_two(input: &str) -> Option<usize> {
             .collect();
         count += 1;
     }
-    let answer = cycles.into_iter().reduce(|acc, f| lcm(acc, f)).unwrap();
+    let answer = cycles.into_iter().reduce(lcm).unwrap();
     Some(answer)
 }
 
@@ -82,9 +78,7 @@ fn gcd(first: usize, second: usize) -> usize {
     let mut max = first;
     let mut min = second;
     if min > max {
-        let val = max;
-        max = min;
-        min = val;
+        std::mem::swap(&mut min, &mut max);
     }
 
     loop {

@@ -17,7 +17,7 @@ pub struct Map {
 
 impl Map {
     fn get(&self, src: &u64) -> Option<u64> {
-        if !(self.src_start..self.src_start + self.length).contains(&src) {
+        if !(self.src_start..self.src_start + self.length).contains(src) {
             return None;
         }
         Some(src - self.src_start + self.dst_start)
@@ -72,46 +72,43 @@ pub fn part_one(input: &str) -> Option<u32> {
             src
         })
         .min();
-    match result {
-        Some(value) => Some(value as u32),
-        None => None,
-    }
+    result.map(|value| value as u32)
 }
 
-fn get_split(maps: &Maps, r: Range<u64>) -> Vec<Range<u64>> {
-    let mut result: Vec<Range<u64>> = vec![];
-    for map in maps {
-        let begin = map.range.contains(&r.start);
-        let end = map.range.contains(&r.end);
-        dbg!(&r);
-        let range_len = r.end - r.start;
-        match (begin, end) {
-            // nothing in the mapping range
-            (false, false) => (),
-            // everything in the mapping range
-            (true, true) => {
-                let dst_start = map.dst_start + r.start - map.src_start;
-                let dst_end = map.dst_start + range_len;
-                result.push(dst_start..dst_end);
-            }
-            // src begin in range, but not end
-            (true, false) => {
-                let extra = r.end - map.range.end;
-                let dst_end = map.dst_start + map.length;
-                let dst_start = dst_end - range_len + extra;
-                result.push(dst_start..dst_end);
-            }
-            // src end in range, but not start
-            (false, true) => {
-                let extra = map.src_start - r.start;
-                let dst_end = map.dst_start + range_len - extra;
-                let dst_start = map.dst_start;
-                result.push(dst_start..dst_end);
-            }
-        }
-    }
-    result
-}
+// fn get_split(maps: &Maps, r: Range<u64>) -> Vec<Range<u64>> {
+//     let mut result: Vec<Range<u64>> = vec![];
+//     for map in maps {
+//         let begin = map.range.contains(&r.start);
+//         let end = map.range.contains(&r.end);
+//         dbg!(&r);
+//         let range_len = r.end - r.start;
+//         match (begin, end) {
+//             // nothing in the mapping range
+//             (false, false) => (),
+//             // everything in the mapping range
+//             (true, true) => {
+//                 let dst_start = map.dst_start + r.start - map.src_start;
+//                 let dst_end = map.dst_start + range_len;
+//                 result.push(dst_start..dst_end);
+//             }
+//             // src begin in range, but not end
+//             (true, false) => {
+//                 let extra = r.end - map.range.end;
+//                 let dst_end = map.dst_start + map.length;
+//                 let dst_start = dst_end - range_len + extra;
+//                 result.push(dst_start..dst_end);
+//             }
+//             // src end in range, but not start
+//             (false, true) => {
+//                 let extra = map.src_start - r.start;
+//                 let dst_end = map.dst_start + range_len - extra;
+//                 let dst_start = map.dst_start;
+//                 result.push(dst_start..dst_end);
+//             }
+//         }
+//     }
+//     result
+// }
 
 pub fn part_two(input: &str) -> Option<u64> {
     // let (seeds, mappings) = puzzle(input);

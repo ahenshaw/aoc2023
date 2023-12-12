@@ -44,7 +44,7 @@ fn get_perimeter(input: &str) -> Vec<Location> {
             _ => unreachable!(),
         };
         prev = cursor;
-        cursor = cursor + next_dir;
+        cursor += next_dir;
     }
     perimeter
 }
@@ -58,7 +58,7 @@ pub fn part_two(input: &str) -> Option<isize> {
     let mut perimeter = get_perimeter(input);
     let circumference = perimeter.len();
 
-    perimeter.push(perimeter.first().unwrap().clone());
+    perimeter.push(*perimeter.first().unwrap());
     let area: isize = perimeter
         .windows(2)
         .map(|w| w[0].row.0 * w[1].column.0 - w[1].row.0 * w[0].column.0)
