@@ -1,5 +1,7 @@
+use itertools::Itertools;
+use std::ops::{Shl, Shr};
+
 use prse::parse;
-use regex::Regex;
 
 fn get_groups(s: &str) -> Vec<usize> {
     s.split('.')
@@ -8,23 +10,37 @@ fn get_groups(s: &str) -> Vec<usize> {
         .collect()
 }
 
-fn stream(s: &str, a: char, b: char) -> String {
-    let pat = s.to_string();
-    for x in 0..(1u32.shl::<usize>(n)) {}
-    "".to_string()
+fn make_re(groups: Vec<usize>) -> String {
+    groups
+        .into_iter()
+        .map(|count| r"([\?#]{count})")
+        .join(r"[\.\?]+")
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
+    let mut total = 0;
     for line in input.lines() {
         let (condition, group) = line.split_once(' ').unwrap();
         let groups: Vec<usize> = parse!(group, "{:,:}");
-        let q = condition.chars().filter(|&c| c == '?').count();
-        println!("{:?}", get_groups(&condition));
+
+        let indices: Vec<usize> = condition.match_indices('?').map(|(i, _)| i).collect();
+        let n = indices.len();
+        for mut x in 0..(1u32.shl(n)) {
+            let mut out: Vec<char> = condition.chars().collect();
+            for i in 0..n {
+                out[indices[i]] = if x & 1 == 0 { '.' } else { '#' };
+                x = x.shr(1);
+            }
+            let s: String = out.into_iter().collect();
+            if get_groups(&s) == groups {
+                total += 1
+            }
+        }
     }
-    None
+    Some(total)
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
+pub fn part_two(_input: &str) -> Option<u32> {
     None
 }
 
