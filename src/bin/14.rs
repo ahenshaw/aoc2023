@@ -3,7 +3,7 @@ use itertools::Itertools;
 
 type Platform = Grid<char>;
 
-fn roll_north(platform: &Platform) -> Platform {
+fn tilt(platform: &Platform) -> Platform {
     let mut rolled: Platform = grid![];
     for col in platform.iter_cols() {
         let mut rolled_col: Vec<char> = col.copied().collect();
@@ -24,6 +24,15 @@ fn roll_north(platform: &Platform) -> Platform {
     rolled
 }
 
+fn calc_load(platform: &Platform) -> usize {
+    let num_rows = platform.rows();
+    platform
+        .indexed_iter()
+        .filter(|(_, &c)| c == 'O')
+        .map(|((row, _), _)| num_rows - row)
+        .sum()
+}
+
 fn parse(input: &str) -> Grid<char> {
     let mut platform: Grid<char> = grid![];
     for row in input.lines() {
@@ -34,20 +43,48 @@ fn parse(input: &str) -> Grid<char> {
 
 pub fn part_one(input: &str) -> Option<usize> {
     let platform = parse(input);
-    let mut load = 0;
-    let rolled = roll_north(&platform);
-    let rows = rolled.rows();
-    for ((row, _), &c) in rolled.indexed_iter() {
-        if c == 'O' {
-            load += rows - row;
+    let rolled = tilt(&platform);
+
+    Some(calc_load(&rolled))
+}
+
+struct CycleDetector(Vec<usize>);
+impl CycleDetector {
+    fn new() -> Self {
+        Self(Vec::new())
+    }
+
+    fn add(&mut self, item: usize) -> Option<usize> {
+        if let Some(pos) = self.0.iter().position(|x| x == &item) {
+            return Some(self.0.len() + 1 - pos);
+        } else {
+            self.0.push(item);
+            None
+        }
+    }
+}
+/// printed 300 scores, saw the pattern
+/// and manually calculated the 1 billionth score
+
+const CYCLES: u32 = 1000000000;
+pub fn part_two(input: &str) -> Option<usize> {
+    let mut platform = parse(input);
+    let mut cycle_detector = CycleDetector::new();
+    for cycle in 0..CYCLES {
+        for _ in 0..4 {
+            platform = tilt(&platform);
+            platform.rotate_right();
+        }
+        let load = calc_load(&platform);
+        if cycle > 200 {
+            if let Some(cycle_len) = cycle_detector.add(load) {
+                println!("Cycles at {cycle_len}, base {cycle}");
+                break;
+            }
         }
     }
 
-    Some(load)
-}
-
-pub fn part_two(_input: &str) -> Option<u32> {
-    None
+    Some(calc_load(&platform))
 }
 
 advent_of_code::main!(14);
