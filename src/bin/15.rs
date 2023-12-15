@@ -31,7 +31,7 @@ enum Op {
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
-    let mut boxes: Boxes = (0..256).map(|i| Box::new(i)).collect();
+    let mut boxes: Boxes = (0..256).map(Box::new).collect();
 
     for op in parse(input) {
         match op {
@@ -49,7 +49,7 @@ fn score(boxes: &Boxes) -> usize {
         .map(|b| {
             b.lenses
                 .iter()
-                .filter(|lens| lens.focus != None)
+                .filter(|lens| lens.focus.is_some())
                 .enumerate()
                 .map(|(i, lens)| (b.id + 1) * (i + 1) * lens.focus.unwrap())
                 .sum::<usize>()
