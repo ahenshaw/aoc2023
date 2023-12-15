@@ -48,25 +48,28 @@ pub fn part_one(input: &str) -> Option<usize> {
     Some(calc_load(&rolled))
 }
 
-struct CycleDetector(Vec<usize>);
+struct CycleDetector(Vec<Platform>);
 impl CycleDetector {
     fn new() -> Self {
         Self(Vec::new())
     }
 
-    fn add(&mut self, item: usize) -> Option<usize> {
-        if let Some(pos) = self.0.iter().position(|x| x == &item) {
+    fn add(&mut self, item: &Platform) -> Option<usize> {
+        if let Some(pos) = self.0.iter().position(|x| x == item) {
             return Some(self.0.len() + 1 - pos);
         } else {
-            self.0.push(item);
+            self.0.push(item.clone());
             None
         }
+    }
+    fn get(&mut self, index: usize) -> Platform {
+        self.0.get(index).unwrap().clone()
     }
 }
 /// printed 300 scores, saw the pattern
 /// and manually calculated the 1 billionth score
 
-const CYCLES: u32 = 1000000000;
+const CYCLES: usize = 20; //1000000000;
 pub fn part_two(input: &str) -> Option<usize> {
     let mut platform = parse(input);
     let mut cycle_detector = CycleDetector::new();
@@ -75,16 +78,19 @@ pub fn part_two(input: &str) -> Option<usize> {
             platform = tilt(&platform);
             platform.rotate_right();
         }
-        let load = calc_load(&platform);
-        if cycle > 200 {
-            if let Some(cycle_len) = cycle_detector.add(load) {
-                println!("Cycles at {cycle_len}, base {cycle}");
-                break;
-            }
-        }
+        println!("{cycle} {}", calc_load(&platform));
+        // if let Some(cycle_len) = cycle_detector.add(&platform) {
+        //     let base = cycle - cycle_len;
+        //     println!("Cycles at {cycle_len}, base {base}");
+        //     let index = ((CYCLES - base) % cycle_len) + base - 1;
+        //     dbg!(&index);
+        //     let platform = cycle_detector.get(index);
+        //     if cycle == 20 {
+        //         return Some(calc_load(&platform));
+        //     };
+        // }
     }
-
-    Some(calc_load(&platform))
+    None
 }
 
 advent_of_code::main!(14);
@@ -106,6 +112,6 @@ mod tests {
         let result = part_two(&advent_of_code::template::read_file_with_part(
             "examples", 14, 2,
         ));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(64));
     }
 }
